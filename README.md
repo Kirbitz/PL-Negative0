@@ -14,3 +14,11 @@ or
     bash compile.sh hello.l hello.y
 
 command then produces program and program.exe select the appropriate one and run on your system
+
+Linux:
+
+    ./program
+
+Windows:
+
+    program.exe
