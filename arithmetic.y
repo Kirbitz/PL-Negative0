@@ -13,6 +13,7 @@ int yyerror(const char *s);
 
 %token <num> NUMBER
 %token ADD SUB MUL DIV
+%token OpenP CloseP
 %token EOL
 %type <num> factor
 %type <num> exp
@@ -25,7 +26,7 @@ calclist: /* nothing */
         ;
 
 exp: factor
-        | exp ADD factor { $$ = $1 + $3; printf("%f %f\n", $1, $3); }
+        | exp ADD factor { $$ = $1 + $3; }
         | exp SUB factor { $$ = $1 - $3; }
         ;
 
@@ -34,4 +35,6 @@ factor: term
         | factor DIV term { $$ = $1 / $3; }
         ;
 
-term: NUMBER;
+term: NUMBER
+        | OpenP exp CloseP { $$ = ($2); }
+        ;

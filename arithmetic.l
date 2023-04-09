@@ -5,13 +5,18 @@ int yyerror(char *errormsg);
 
 %}
 
+digit [0-9]
+real -?{digit}+\.?{digit}*
+
 %%
 
 "+"    { return ADD; }
 "-"    { return SUB; }
 "*"    { return MUL; }
 "/"    { return DIV; }
-[0-9]+ { yylval.num = atoi(yytext); return NUMBER; }
+"("    { return OpenP; }
+")"    { return CloseP; }
+{real} { yylval.num = atof(yytext); return NUMBER; }
 \n     { return EOL; }
 [ \t]  { /* Ignore white space */ }
 .      { yyerror("Unknown char");  }
