@@ -25,7 +25,7 @@ real -?{digit}+\.?{digit}*
 
 int main(int argc, char **argv)
 {
-  printf("%d\n", yyparse());
+  yyparse();
 
   return 0;
 }
