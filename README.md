@@ -7,13 +7,23 @@ To use compile.sh just run in bash using bash or ./
 
 ### Example
 
-    ./compile.sh hello.l hello.y
+    ./compile.sh flex.l bison.y
 
 or
 
-    bash compile.sh hello.l hello.y
+    bash compile.sh flex.l bison.y
 
-command then produces program and program.exe select the appropriate one and run on your system
+
+For compiling additional C files just include them as parameter 3 onwards
+
+### Example
+    ./compile.sh flex.l bison.y optional_c_file1.c optional_c_file2.c
+
+or
+
+    bash compile.sh flex.l bison.y optional_c_file1.c optional_c_file2.c
+
+The bash command then produces program and program.exe select the appropriate one and run on your system
 
 Linux:
 
