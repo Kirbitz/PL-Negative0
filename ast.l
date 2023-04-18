@@ -2,32 +2,43 @@
 
 #include "y.tab.h"
 #include "ast.h"
+#include "symbol_table.h"
 void yyerror(char *s, ...);
 
 %}
 
+/* float exponent */
+EXP ([Ee][-+]?[0-9]+)
+alpha [a-zA-Z]
 digit [0-9]
-real -?{digit}+\.?{digit}*
-alpha [A-Za-z]
+symbol_name {alpha}({alpha}|{digit})*
 
 %%
-
-"+"    { return ADD; }
-"-"    { return SUB; }
-"*"    { return MUL; }
-"/"    { return DIV; }
-"("    { return OpenP; }
-")"    { return CloseP; }
-"|"    { return PIPE; }
-{real} { yylval.num = atof(yytext); return NUMBER; }
-\n     { return EOL; }
-[ \t]  { /* Ignore white space */ }
-.      { yyerror("Unknown char %c\n", *yytext);  }
+"+"                                { return ADD; }
+"-"                                { return SUB; }
+"*"                                { return MULT; }
+"/"                                { return DIV; }
+":="                               { return ASSIGN; }
+"|"                                { return ABS; }
+","                                { return COMMA; }
+"("                                { return OPENP; }
+")"                                { return CLOSEP; }
+("VAR"|"var")                      { return VAR; }
+("PROCEDURE"|"procedure")          { return PROCEDURE; }
+("BEGIN"|"begin")                  { return START; }
+("END"|"end")                      { return END; }
+("CALL"|"call")                    { return CALL; }
+{symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
+[0-9]+"."[0-9]*{EXP}? |
+"."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }
+[ \t\n] /* ignore whitespace */
+";"                                { return EOL; }
+.                                  { yyerror("Mystery character %c\n", *yytext); }
 
 %%
 
 int main() {
-    printf("> ");
+    printf("\e[1;31m>>> \e[0m");
     return yyparse();
 }
 

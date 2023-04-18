@@ -3,42 +3,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "symbol_table.h"
+#include "function.h"
 int yylex(void);
 
 %}
 
 %union {
-    double num;
-    struct ast *a;
+        struct ast *a;
+        double d;
+        struct symbol *s;
+        struct symlist *sl;
 }
-
-%token <num> NUMBER
-%token ADD SUB MUL DIV
-%token OpenP CloseP PIPE
+/* declare tokens */
+%token <d> NUMBER
+%token <s> NAME
 %token EOL
-%type <a> exp factor term
+%token VAR PROCEDURE
+%token OPENP CLOSEP COMMA
+%token START END CALL
+%right ASSIGN
+%left ADD SUB
+%left MULT DIV
+%nonassoc ABS UMINUS
+%type <a> exp explist
+%type <sl> symlist
+%start calclist
 
 %%
 
+exp:  exp ADD exp { $$ = newast('+', $1,$3); }
+        | exp SUB exp { $$ = newast('-', $1,$3);}
+        | exp MULT exp { $$ = newast('*', $1,$3); }
+        | exp DIV exp { $$ = newast('/', $1,$3); }
+        | ABS exp ABS { $$ = newast('|', $2, NULL); }
+        | OPENP exp CLOSEP { $$ = $2; }
+        | SUB exp %prec UMINUS { $$ = newast('M', $2, NULL); }
+        | NUMBER { $$ = newnum($1); }
+        | NAME { $$ = newref($1); }
+        | VAR NAME ASSIGN exp { $$ = newasgn($2, $4); }
+        | CALL NAME OPENP explist CLOSEP { $$ = newuserfunction($2, $4); }
+        ;
+explist: exp
+        | exp COMMA explist { $$ = newast('L', $1, $3); }
+        ;
+symlist: NAME { $$ = newsymlist($1, NULL); }
+        | NAME COMMA symlist { $$ = newsymlist($1, $3); }
+        ;
+
 calclist: /* nothing */
-        | calclist exp EOL { printf("= %2.6g\n", eval($2)); treefree($2); printf("> "); }
-        | calclist EOL { printf("> "); }
-        ;
-
-exp: factor
-        | exp ADD factor { $$ = newast('+', $1, $3); }
-        | exp SUB factor { $$ = newast('-', $1, $3); }
-        ;
-
-factor: term
-        | factor MUL term { $$ = newast('*', $1, $3); }
-        | factor DIV term { $$ = newast('/', $1, $3); }
-        ;
-
-term: NUMBER { $$ = newnum($1); }
-        | PIPE exp PIPE { $$ = newast('|', $2, NULL); }
-        | OpenP exp CloseP { $$ = ($2); }
-        | SUB term { $$ = newast('M', $2, NULL); }
+        | calclist exp EOL {
+                printf("= %4.4g\n\e[1;31m>>> \e[0m", eval($2));
+                treefree($2);
+        }
+        | calclist PROCEDURE NAME OPENP symlist CLOSEP START exp END EOL {
+                dodef($3, $5, $8);
+                printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
+        }
+        | calclist error EOL { yyerrok; printf("\e[1;31m>>> \e[0m"); }
         ;
 
 %%
