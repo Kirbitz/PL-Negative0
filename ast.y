@@ -20,7 +20,7 @@ int yylex(void);
 %token <s> NAME
 %token EOL
 %token VAR PROCEDURE
-%token OPENP CLOSEP COMMA
+%token OPENP CLOSEP COMMA PRINT
 %token START END CALL
 %right ASSIGN
 %left ADD SUB
@@ -44,17 +44,24 @@ exp:  exp ADD exp { $$ = newast('+', $1,$3); }
         | VAR NAME ASSIGN exp { $$ = newasgn($2, $4); }
         | CALL NAME OPENP explist CLOSEP { $$ = newuserfunction($2, $4); }
         ;
+
 explist: exp
         | exp COMMA explist { $$ = newast('L', $1, $3); }
         ;
+
 symlist: NAME { $$ = newsymlist($1, NULL); }
         | NAME COMMA symlist { $$ = newsymlist($1, $3); }
         ;
 
 calclist: /* nothing */
         | calclist exp EOL {
-                printf("= %4.4g\n\e[1;31m>>> \e[0m", eval($2));
+                printf("\e[1;31m>>> \e[0m");
+                eval($2);
                 treefree($2);
+        }
+        | calclist PRINT OPENP exp CLOSEP EOL {
+                printf("%4.4g\n\e[1;31m>>> \e[0m", eval($4));
+                treefree($4);
         }
         | calclist PROCEDURE NAME OPENP symlist CLOSEP START exp END EOL {
                 dodef($3, $5, $8);
