@@ -17,8 +17,6 @@ struct symlist {
 
 #define NHASH 9997
 
-struct symbol symtab[NHASH];
-
 struct symbol *lookup(char* sym);
 struct symbol *create(char* sym);
 struct symlist *newsymlist(struct symbol *sym, struct symlist *next);

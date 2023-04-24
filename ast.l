@@ -26,12 +26,12 @@ symbol_name {alpha}({alpha}|{digit})*
 ("print"|"PRINT")                  { return PRINT; }
 ("VAR"|"var")                      { return VAR; }
 ("PROCEDURE"|"procedure")          { return PROCEDURE; }
-("BEGIN"|"begin")                  { return START; }
-("END"|"end")                      { return END; }
+"{"                                { return OCLP; }
+"}"                                { return CCLP; }
 ("CALL"|"call")                    { return CALL; }
 {symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
 [0-9]+"."[0-9]*{EXP}? |
-"0."?[0-9]+{EXP}?EXP                   { yylval.d = atof(yytext); return NUMBER; }
+"."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }
 [ \t\n] /* ignore whitespace */
 ";"                                { return EOL; }
 .                                  { yyerror("Mystery character %c\n", *yytext); }

@@ -21,7 +21,7 @@ int yylex(void);
 %token EOL
 %token VAR PROCEDURE
 %token OPENP CLOSEP COMMA PRINT
-%token START END CALL
+%token OCLP CCLP CALL
 %right ASSIGN
 %left ADD SUB
 %left MULT DIV
@@ -63,7 +63,7 @@ calclist: /* nothing */
                 printf("%4.4g\n\e[1;31m>>> \e[0m", eval($4));
                 treefree($4);
         }
-        | calclist PROCEDURE NAME OPENP symlist CLOSEP START exp END EOL {
+        | calclist PROCEDURE NAME OPENP symlist CLOSEP OCLP exp CCLP EOL {
                 dodef($3, $5, $8);
                 printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
         }

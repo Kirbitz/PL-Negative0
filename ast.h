@@ -6,22 +6,22 @@ void yyerror(char *s, ...);
 /* nodes in the abstract syntax tree */
 /* all have common initial nodetype */
 struct ast {
-    int nodetype;
-    struct ast *l;
-    struct ast *r;
+  int nodetype;
+  struct ast *l;
+  struct ast *r;
 };
 struct numval {
-    int nodetype; /* type K */
-    double number;
+  int nodetype; /* type K */
+  double number;
 };
 struct symref {
-    int nodetype; /* type N */
-    struct symbol *s;
+  int nodetype; /* type N */
+  struct symbol *s;
 };
 struct symasgn {
-    int nodetype; /* type = */
-    struct symbol *s;
-    struct ast *v; /* value */
+  int nodetype; /* type = */
+  struct symbol *s;
+  struct ast *v; /* value */
 };
 /* build an AST */
 struct ast *newast(int nodetype, struct ast *l, struct ast *r);
