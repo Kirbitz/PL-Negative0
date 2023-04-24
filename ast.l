@@ -26,6 +26,7 @@ symbol_name {alpha}({alpha}|{digit})*
 ("print"|"PRINT")                  { return PRINT; }
 ("VAR"|"var")                      { return VAR; }
 ("PROCEDURE"|"procedure")          { return PROCEDURE; }
+("RETURN"|"return")                { return RETURN; }
 "{"                                { return OCLP; }
 "}"                                { return CCLP; }
 ("CALL"|"call")                    { return CALL; }

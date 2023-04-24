@@ -21,7 +21,7 @@ int yylex(void);
 %token EOL
 %token VAR PROCEDURE
 %token OPENP CLOSEP COMMA PRINT
-%token OCLP CCLP CALL
+%token OCLP CCLP CALL RETURN
 %right ASSIGN
 %left ADD SUB
 %left MULT DIV
@@ -46,11 +46,8 @@ exp:  exp ADD exp { $$ = newast('+', $1,$3); }
         ;
 
 list: { $$ = NULL; }
-        | exp EOL list { if ($3 == NULL)
-                            $$ = $1;
-                         else
-                            $$ = newast('L', $1, $3);
-                       }
+        | exp EOL list { $$ = newast('L', $1, $3); }
+        | RETURN exp EOL list { $$ = $2; }
         ;
 
 explist: exp
