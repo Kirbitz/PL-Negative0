@@ -26,7 +26,7 @@ int yylex(void);
 %left ADD SUB
 %left MULT DIV
 %nonassoc ABS UMINUS
-%type <a> exp explist
+%type <a> exp explist list
 %type <sl> symlist
 %start calclist
 
@@ -43,6 +43,14 @@ exp:  exp ADD exp { $$ = newast('+', $1,$3); }
         | NAME { $$ = newref($1); }
         | VAR NAME ASSIGN exp { $$ = newasgn($2, $4); }
         | CALL NAME OPENP explist CLOSEP { $$ = newuserfunction($2, $4); }
+        ;
+
+list: { $$ = NULL; }
+        | exp EOL list { if ($3 == NULL)
+                            $$ = $1;
+                         else
+                            $$ = newast('L', $1, $3);
+                       }
         ;
 
 explist: exp
@@ -63,7 +71,7 @@ calclist: /* nothing */
                 printf("%4.4g\n\e[1;31m>>> \e[0m", eval($4));
                 treefree($4);
         }
-        | calclist PROCEDURE NAME OPENP symlist CLOSEP OCLP exp CCLP EOL {
+        | calclist PROCEDURE NAME OPENP symlist CLOSEP OCLP list CCLP EOL {
                 dodef($3, $5, $8);
                 printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
         }
