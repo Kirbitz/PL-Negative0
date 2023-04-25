@@ -29,7 +29,6 @@ symbol_name {alpha}({alpha}|{digit})*
 ("RETURN"|"return")                { return RETURN; }
 "{"                                { return OCLP; }
 "}"                                { return CCLP; }
-("CALL"|"call")                    { return CALL; }
 {symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }

@@ -21,7 +21,7 @@ int yylex(void);
 %token EOL
 %token VAR PROCEDURE
 %token OPENP CLOSEP COMMA PRINT
-%token OCLP CCLP CALL RETURN
+%token OCLP CCLP RETURN
 %right ASSIGN
 %left ADD SUB
 %left MULT DIV
@@ -42,7 +42,7 @@ exp:  exp ADD exp { $$ = newast('+', $1,$3); }
         | NUMBER { $$ = newnum($1); }
         | NAME { $$ = newref($1); }
         | VAR NAME ASSIGN exp { $$ = newasgn($2, $4); }
-        | CALL NAME OPENP explist CLOSEP { $$ = newuserfunction($2, $4); }
+        | NAME OPENP explist CLOSEP { $$ = newuserfunction($1, $3); }
         ;
 
 list: { $$ = NULL; }
