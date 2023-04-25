@@ -39,11 +39,11 @@ symbol_name {alpha}({alpha}|{digit})*
 %%
 
 int main() {
-    printf("\e[1;31m>>> \e[0m");
-    return yyparse();
+  printf("\e[1;31m>>> \e[0m");
+  return yyparse();
 }
 
 int yywrap(void)
 {
-   return 0;
+  return 0;
 }
