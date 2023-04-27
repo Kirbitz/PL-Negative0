@@ -75,7 +75,9 @@ void treefree(struct ast *a) {
   case 'M':
   case 'C':
   case 'F':
-    treefree(a->l);
+    if (a->l) {
+      treefree(a->l);
+    }
   case 'P':
   /* no subtree */
   case 'K':

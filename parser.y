@@ -55,10 +55,18 @@ list: { $$ = NULL; }
 
 explist: exp
   | exp ',' explist { $$ = newast('L', $1, $3); }
+  | { $$ = NULL; }
   ;
 
-symlist: NAME { $$ = newsymlist($1, NULL); }
-  | NAME ',' symlist { $$ = newsymlist($1, $3); }
+symlist: { $$ = NULL; }
+  | NAME { $$ = newsymlist($1, NULL); }
+  | NAME ',' symlist {
+    if ($3 == NULL) {
+      $$ = newsymlist($1, NULL);
+    } else {
+      $$ = newsymlist($1, $3); 
+    }
+  }
   ;
 
 calclist: /* nothing */
