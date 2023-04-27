@@ -1,5 +1,7 @@
 %{
 
+#include "symbol_table.h"
+#include "ast.h"
 #include "y.tab.h"
 void yyerror(char *s, ...);
 
@@ -12,26 +14,28 @@ digit [0-9]
 symbol_name {alpha}({alpha}|{digit})*
 
 %%
-"+"                                { return ADD; }
-"-"                                { return SUB; }
-"*"                                { return MULT; }
-"/"                                { return DIV; }
-":="                               { return ASSIGN; }
-"|"                                { return ABS; }
-","                                { return COMMA; }
-"("                                { return OPENP; }
-")"                                { return CLOSEP; }
+"+" |
+"-" |
+"*" |
+"/" |
+"=" |
+"|" |
+"," |
+"(" |
+")" |
+"}" |
+"{" |
+"[" |
+"]" |
+";"                                { return yytext[0]; }
 ("print"|"PRINT")                  { return PRINT; }
 ("VAR"|"var")                      { return VAR; }
 ("PROCEDURE"|"procedure")          { return PROCEDURE; }
 ("RETURN"|"return")                { return RETURN; }
-"{"                                { return OCLP; }
-"}"                                { return CCLP; }
 {symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }
 [ \t\n] /* ignore whitespace */
-";"                                { return EOL; }
 .                                  { yyerror("Mystery character %c\n", *yytext); }
 
 %%
