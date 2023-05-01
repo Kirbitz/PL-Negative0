@@ -9,8 +9,8 @@
  * @param value The value of the pair as a double.
  */
 typedef struct {
-	char* key;
-	double value;
+  char* key;
+  double value;
 } Pair;
 
 /**
@@ -20,9 +20,9 @@ typedef struct {
  * @param capacity The maximum number of pairs the map can hold.
  */
 typedef struct {
-	Pair* pairs;
-	int size;
-	int capacity;
+  Pair* pairs;
+  int size;
+  int capacity;
 } Map;
 
 /**
@@ -31,11 +31,11 @@ typedef struct {
  * @param capacity The maximum number of pairs the map can hold.
  */
 void Map_init(Map* map, int capacity) {
-	map->size = 0;
-	map->capacity = capacity;
+  map->size = 0;
+  map->capacity = capacity;
 
-	// allocate memory for the pairs
-	map->pairs = (Pair*)malloc(sizeof(Pair) * map->capacity);
+  // allocate memory for the pairs
+  map->pairs = (Pair*)malloc(sizeof(Pair) * map->capacity);
 }
 
 /**
@@ -45,32 +45,32 @@ void Map_init(Map* map, int capacity) {
  * @param value The value of the pair.
  */
 void Map_put(Map* map, char* key, double value) {
-	// check if the map is full
-	if (map->size == map->capacity) {
-		// Double the capacity of the map
-		map->capacity *= CAPACITY_MULTIPLIER;
+  // check if the map is full
+  if (map->size == map->capacity) {
+    // Double the capacity of the map
+    map->capacity *= CAPACITY_MULTIPLIER;
 
-		// allocate memory for the new capacity of pairs
-		Pair* temp = (Pair*)malloc(sizeof(Pair) * map->capacity);
+    // allocate memory for the new capacity of pairs
+    Pair* temp = (Pair*)malloc(sizeof(Pair) * map->capacity);
 
-		// copy the old pairs to the new memory
-		memcpy(
-			temp, // destination
-			map->pairs, // source
-			sizeof(Pair) * map->size // number of bytes to copy
-		);
+    // copy the old pairs to the new memory
+    memcpy(
+      temp, // destination
+      map->pairs, // source
+      sizeof(Pair) * map->size // number of bytes to copy
+    );
 
-		// free the old memory of pairs
-		free(map->pairs);
+    // free the old memory of pairs
+    free(map->pairs);
 
-		// assign the new memory of pairs
-		map->pairs = temp;
-	}
+    // assign the new memory of pairs
+    map->pairs = temp;
+  }
 
-	map->pairs[map->size].key = key;
-	map->pairs[map->size].value = value;
+  map->pairs[map->size].key = key;
+  map->pairs[map->size].value = value;
 
-	map->size++;
+  map->size++;
 }
 
 /**
@@ -80,14 +80,14 @@ void Map_put(Map* map, char* key, double value) {
  * @return The value of the pair with the given key. If the key is not found, return -1.0.
  */
 double Map_get(Map* map, char* key) {
-	for (int i = 0; i < map->size; i++) {
-		// compare the key of the pair with the given key
-		if (strcmp(map->pairs[i].key, key) == 0) {
-			return map->pairs[i].value;
-		}
-	}
+  for (int i = 0; i < map->size; i++) {
+    // compare the key of the pair with the given key
+    if (strcmp(map->pairs[i].key, key) == 0) {
+      return map->pairs[i].value;
+    }
+  }
 
-	return NULL_DOUBLE;
+  return NULL_DOUBLE;
 }
 
 /**
@@ -98,12 +98,12 @@ double Map_get(Map* map, char* key) {
  * @return 1 if the key is found and the value is set. Otherwise, return 0.
  */
 int Map_set(Map* map, char* key, double value) {
-	for (int i = 0; i < map->size; i++) {
-		if (strcmp(map->pairs[i].key, key) == 0) {
-			map->pairs[i].value = value;
-			return 1;
-		}
-	}
+  for (int i = 0; i < map->size; i++) {
+    if (strcmp(map->pairs[i].key, key) == 0) {
+      map->pairs[i].value = value;
+      return 1;
+    }
+  }
 
-	return 0;
+  return 0;
 }
