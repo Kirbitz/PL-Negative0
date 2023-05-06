@@ -16,10 +16,11 @@ int yylex(void);
   struct symlist *sl;
 }
 
-/* declare tokens */
+/* declare tokens TODO: insert new grammar for WHILE DO IF THEN ELSE*/
 %token <d> NUMBER
 %token <s> NAME
 %token VAR PROCEDURE
+%token WHILE DO IF THEN ELSE
 %token PRINT RETURN
 %token '(' ')' '{' '}' '[' ']'
 %token ';' ','
