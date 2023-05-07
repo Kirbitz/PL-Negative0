@@ -28,7 +28,7 @@ int yylex(void);
 %left '+' '-'
 %left '*' '/'
 %nonassoc '|' UMINUS
-%type <a> exp explist list
+%type <a> exp explist list statement_list statement print_statement assignment_statement if_statement while_statement
 %type <sl> symlist
 %start program
 
@@ -49,8 +49,22 @@ program: /* nothing */
 
 
 /* FIX: from here until the next breakline is my proposal for the grammar */
+
+program: /* nothing */
+        | program statement_list {
+          eval($2);
+          treefree($2);
+          printf("\e[1;31m>>> \e[0m");
+        }
+        | program PROCEDURE NAME '(' symlist ')' '{' list '}' ';' {
+          dodef($3, $5, $8);
+          printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
+        }
+        | program error ';' { yyerrok; printf("\e[1;31m>>> \e[0m"); }
+  ;
+
 statement_list: /* nothing */
-              | statement ';'
+              | statement ';' { $$ = newast('L', $1, NULL);}
               | statement_list ';' statement ';'
               ;
 
@@ -74,6 +88,17 @@ if_statement: IF '(' exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3,
 
 while_statement: WHILE '(' exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }
 
+exp:  exp '+' exp { $$ = newast('+', $1,$3); }
+  | exp '-' exp { $$ = newast('-', $1,$3);}
+  | exp '*' exp { $$ = newast('*', $1,$3); }
+  | exp '/' exp { $$ = newast('/', $1,$3); }
+  | '|' exp '|' { $$ = newast('|', $2, NULL); }
+  | '(' exp ')' { $$ = $2; }
+  | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
+  | NUMBER { $$ = newnum($1); }
+  | NAME { $$ = newref($1); }
+  | NAME '(' explist ')' { $$ = newuserfunction($1, $3); }
+  ;
 
 
 
