@@ -41,7 +41,7 @@ int yylex(void);
 /* FIX: from here until the next breakline is my proposal for the grammar */
 
 program: /* nothing */
-        | program statement_list ';' {
+        | program statement_list {
           eval($2);
           treefree($2);
           printf("\e[1;31m>>> \e[0m");
@@ -62,7 +62,7 @@ statement_list: /* nothing */ { $$ = NULL;}
                                                     $$ = newast('L', $1, $3);
                                                     }
                                                 }
-              | RETURN exp { $$ = $2; }
+              | RETURN exp ';' { $$ = $2; }
               ;
 
 statement : print_statement
@@ -78,7 +78,7 @@ assignment_statement: VAR NAME '=' exp { $$ = newasgn($2, $4); }
   | VAR NAME { $$ = newasgn($2, newnum(0)); }
   ;
 
-if_statement: IF '(' comp_exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
+if_statement: IF '(' comp_exp ')' '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
   | IF '(' comp_exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
   ;
 
