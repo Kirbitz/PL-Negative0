@@ -21,6 +21,7 @@ int yylex(void);
 %token <s> NAME
 %token VAR PROCEDURE
 %token WHILE DO IF THEN ELSE
+%token OR AND NOT
 %token PRINT RETURN
 %token '(' ')' '{' '}' '[' ']'
 %token ';' ','
