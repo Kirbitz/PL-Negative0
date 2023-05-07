@@ -30,7 +30,7 @@ int yylex(void);
 %nonassoc '|' UMINUS
 %type <a> exp explist list
 %type <sl> symlist
-%start calclist
+%start program
 
 %%
 
@@ -70,17 +70,63 @@ symlist: { $$ = NULL; }
   }
   ;
 
-calclist: /* nothing */
-  | calclist exp ';' {
+program: /* nothing */
+  | program exp ';' {
     eval($2);
     treefree($2);
     printf("\e[1;31m>>> \e[0m");
   }
-  | calclist PROCEDURE NAME '(' symlist ')' '{' list '}' ';' {
+  | program PROCEDURE NAME '(' symlist ')' '{' list '}' ';' {
     dodef($3, $5, $8);
     printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
   }
-  | calclist error ';' { yyerrok; printf("\e[1;31m>>> \e[0m"); }
+  | program error ';' { yyerrok; printf("\e[1;31m>>> \e[0m"); }
   ;
 
 %%
+
+/*
+
+program: statement_list
+        ;
+
+statement_list: statement
+               | statement_list EOL statement
+                ;
+
+statement: print_statement
+         | assignment_statement
+         | if_statement
+         | while_statement
+         | do_statement
+         ;
+
+print_statement: PRINT expr EOL
+                { printf("%d\n", $2); }
+                ;
+
+assignment_statement: VARIABLE '=' expr EOL
+                      { $1 = $3; }
+
+if_statement: IF expr THEN statement_list else_statement EOL
+              | IF expr THEN statement_list EOL
+
+else_statement: ELSE statement_list
+                | /* empty */
+/*                ;
+
+while_statement: WHILE expr DO statement_list EOL
+
+do_statement: DO statement_list WHILE expr EOL
+
+expr: INTEGER
+    | VARIABLE
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | '(' expr ')'
+
+%%
+
+*/
