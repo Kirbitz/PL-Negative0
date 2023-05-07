@@ -41,7 +41,7 @@ int yylex(void);
 /* FIX: from here until the next breakline is my proposal for the grammar */
 
 program: /* nothing */
-        | program statement_list {
+        | program statement_list EOF {
           eval($2);
           treefree($2);
           printf("\e[1;31m>>> \e[0m");

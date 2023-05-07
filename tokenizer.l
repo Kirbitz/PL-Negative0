@@ -46,6 +46,7 @@ symbol_name {alpha}({alpha}|{digit})*
 ("OR"|"or")                        { return OR; }
 ("AND"|"and")                      { return AND; }
 ("NOT"|"not")                      { return NOT; }
+"."                                { return EOF; }
 {symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }
