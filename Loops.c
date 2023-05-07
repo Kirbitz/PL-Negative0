@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include "ast.h"
-#include "loops.h"
+#include "Loops.h"
 
 struct ast *
 newcmp(int cmptype, struct ast *l, struct ast *r)

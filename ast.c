@@ -1,7 +1,7 @@
 #include "ast.h"
 #include "function.h"
 #include "symbol_table.h"
-#include "loops.h"
+#include "Loops.h"
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>

@@ -1,6 +1,7 @@
 #include "function.h"
 #include "ast.h"
 #include "symbol_table.h"
+#include "Loops.h"
 #include <stdlib.h>
 
 struct ast *newuserfunction(struct symbol *s, struct ast *l) {

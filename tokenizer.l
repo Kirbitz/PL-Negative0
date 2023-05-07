@@ -40,8 +40,6 @@ symbol_name {alpha}({alpha}|{digit})*
 ("OR"|"or")                        { return OR; }
 ("AND"|"and")                      { return AND; }
 ("NOT"|"not")                      { return NOT; }
-("TRUE"|"true")                    { return TRUE; /* TODO: Change to not TRUE because possible return issues */ }
-("FALSE"|"false")                  { return FALSE; /* TODO: Change to not FALSE because possible return issues */ }
 {symbol_name}                      { yylval.s = lookup(yytext); return NAME; }
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}?                   { yylval.d = atof(yytext); return NUMBER; }
