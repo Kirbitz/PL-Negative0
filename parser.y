@@ -78,8 +78,8 @@ assignment_statement: VAR NAME '=' exp { $$ = newasgn($2, $4); }
   | VAR NAME { $$ = newasgn($2, newnum(0)); }
   ;
 
-if_statement: IF '(' comp_exp ')' '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
-  | IF '(' comp_exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
+if_statement: IF '(' comp_exp ')' '{' statement_list '}' { $$ = newflow('I', $3, $6, NULL); }
+  | IF '(' comp_exp ')' '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $6, $10); }
   ;
 
 while_statement: WHILE '(' comp_exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }

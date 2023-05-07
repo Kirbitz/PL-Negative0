@@ -39,7 +39,6 @@ symbol_name {alpha}({alpha}|{digit})*
 ("PROCEDURE"|"procedure")          { return PROCEDURE; }
 ("RETURN"|"return")                { return RETURN; }
 ("IF"|"if")                        { return IF; }
-("THEN"|"then")                    { return THEN; }
 ("ELSE"|"else")                    { return ELSE; }
 ("WHILE"|"while")                  { return WHILE; }
 ("DO"|"do")                        { return DO; }
