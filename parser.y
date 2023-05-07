@@ -69,6 +69,7 @@ statement : print_statement
           | assignment_statement
           | if_statement
           | while_statement
+          | exp { $$ = $1; }
           ;
 
 print_statement: PRINT '(' exp ')' { $$ = newprint($3); }

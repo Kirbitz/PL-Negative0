@@ -1,0 +1,8 @@
+var i = 0;.
+procedure square(x) {
+    return x * x;
+};.
+while (i < 10) {
+    square(i);
+    var i = i + 1;
+};.
