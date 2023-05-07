@@ -91,7 +91,7 @@ exp:  exp '+' exp { $$ = newast('+', $1,$3); }
 comp_exp: exp CMP exp { $$ = newcmp($2, $1, $3); }
         | comp_exp AND comp_exp { $$ = newast('A', $1, $3); }
         | comp_exp OR comp_exp { $$ = newast('O', $1, $3); }
-        | NOT comp_exp { $$ = newast('N', $2, NULL); }
+        | NOT comp_exp { $$ = newast('!', $2, NULL); }
         ;
 
 
