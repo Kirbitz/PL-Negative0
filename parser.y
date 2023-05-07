@@ -5,11 +5,13 @@
 #include "ast.h"
 #include "symbol_table.h"
 #include "function.h"
+#include "Loops.h"
 int yylex(void);
 
 %}
 
 %union {
+  int fn;
   struct ast *a;
   double d;
   struct symbol *s;
@@ -24,11 +26,13 @@ int yylex(void);
 %token PRINT RETURN
 %token '(' ')' '{' '}' '[' ']'
 %token ';' ','
-%right CMP
+%nonassoc <fn> CMP
 %left '+' '-'
 %left '*' '/'
+%left AND OR
+%right NOT
 %nonassoc '|' UMINUS
-%type <a> exp explist list statement_list statement print_statement assignment_statement if_statement while_statement
+%type <a> exp explist statement_list statement print_statement assignment_statement if_statement while_statement comp_exp
 %type <sl> symlist
 %start program
 
@@ -49,18 +53,22 @@ program: /* nothing */
         | program error ';' { yyerrok; printf("\e[1;31m>>> \e[0m"); }
   ;
 
-statement_list: /* nothing */
-              | statement { $$ = newast('L', $1, NULL);}
-              | statement_list ';' statement { $$ = newast('L', $1, $3);}
+statement_list: /* nothing */ { $$ = NULL;}
+              | statement ';' statement_list { /*Check for nullity*/
+                                                  if ($3 == NULL) {
+                                                    $$ = $1;
+                                                  }
+                                                  else{
+                                                    $$ = newast('L', $1, $3);
+                                                    }
+                                                }
               | RETURN exp { $$ = $2; }
-              | RETURN exp ';' statement_list { $$ = $2; }
               ;
 
 statement : print_statement
           | assignment_statement
           | if_statement
           | while_statement
-          | do_statement
           ;
 
 print_statement: PRINT '(' exp ')' { $$ = newprint($3); }
@@ -70,8 +78,8 @@ assignment_statement: VAR NAME '=' exp { $$ = newasgn($2, $4); }
   | VAR NAME { $$ = newasgn($2, newnum(0)); }
   ;
 
-if_statement: IF '(' exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
-  | IF '(' exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
+if_statement: IF '(' comp_exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
+  | IF '(' comp_exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
   ;
 
 while_statement: WHILE '(' comp_exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }
