@@ -22,7 +22,7 @@ int yylex(void);
 %token <d> NUMBER
 %token <s> NAME
 %token VAR PROCEDURE
-%token WHILE DO IF THEN ELSE
+%token WHILE IF ELSE
 %token PRINT RETURN
 %token '(' ')' '{' '}' '[' ']'
 %token ';' ','
@@ -78,11 +78,11 @@ assignment_statement: VAR NAME '=' exp { $$ = newasgn($2, $4); }
   | VAR NAME { $$ = newasgn($2, newnum(0)); }
   ;
 
-if_statement: IF '(' comp_exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3, $7, NULL); }
-  | IF '(' comp_exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
+if_statement: IF '(' comp_exp ')' '{' statement_list '}' { $$ = newflow('I', $3, $6, NULL); }
+  | IF '(' comp_exp ')' '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $6, $10); }
   ;
 
-while_statement: WHILE '(' comp_exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }
+while_statement: WHILE '(' comp_exp ')' '{' statement_list '}' { $$ = newflow('W', $3, $6, NULL); }
 
 exp:  exp '+' exp { $$ = newast('+', $1,$3); }
   | exp '-' exp { $$ = newast('-', $1,$3);}
