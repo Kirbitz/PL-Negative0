@@ -34,29 +34,15 @@ int yylex(void);
 
 %%
 
-program: /* nothing */
-  | program exp ';' {
-    eval($2);
-    treefree($2);
-    printf("\e[1;31m>>> \e[0m");
-  }
-  | program PROCEDURE NAME '(' symlist ')' '{' list '}' ';' {
-    dodef($3, $5, $8);
-    printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
-  }
-  | program error ';' { yyerrok; printf("\e[1;31m>>> \e[0m"); }
-  ;
-
-
 /* FIX: from here until the next breakline is my proposal for the grammar */
 
 program: /* nothing */
-        | program statement_list {
+        | program statement_list ';' {
           eval($2);
           treefree($2);
           printf("\e[1;31m>>> \e[0m");
         }
-        | program PROCEDURE NAME '(' symlist ')' '{' list '}' ';' {
+        | program PROCEDURE NAME '(' symlist ')' '{' statement_list '}' ';' {
           dodef($3, $5, $8);
           printf("Defined %s\n\e[1;31m>>> \e[0m", $3->name); 
         }
@@ -64,8 +50,10 @@ program: /* nothing */
   ;
 
 statement_list: /* nothing */
-              | statement ';' { $$ = newast('L', $1, NULL);}
-              | statement_list ';' statement ';'
+              | statement { $$ = newast('L', $1, NULL);}
+              | statement_list ';' statement { $$ = newast('L', $1, $3);}
+              | RETURN exp { $$ = $2; }
+              | RETURN exp ';' statement_list { $$ = $2; }
               ;
 
 statement : print_statement
@@ -101,31 +89,15 @@ exp:  exp '+' exp { $$ = newast('+', $1,$3); }
   ;
 
 comp_exp: exp CMP exp { $$ = newcmp($2, $1, $3); }
+        | comp_exp AND comp_exp { $$ = newast('A', $1, $3); }
+        | comp_exp OR comp_exp { $$ = newast('O', $1, $3); }
+        | NOT comp_exp { $$ = newast('N', $2, NULL); }
         ;
 
 
 
 /*------------------------------------*/
 
-exp:  exp '+' exp { $$ = newast('+', $1,$3); }
-  | exp '-' exp { $$ = newast('-', $1,$3);}
-  | exp '*' exp { $$ = newast('*', $1,$3); }
-  | exp '/' exp { $$ = newast('/', $1,$3); }
-  | '|' exp '|' { $$ = newast('|', $2, NULL); }
-  | '(' exp ')' { $$ = $2; }
-  | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
-  | NUMBER { $$ = newnum($1); }
-  | NAME { $$ = newref($1); }
-  | VAR NAME '=' exp { $$ = newasgn($2, $4); }
-  | VAR NAME { $$ = newasgn($2, newnum(0)); }
-  | NAME '(' explist ')' { $$ = newuserfunction($1, $3); }
-  | PRINT '(' exp ')' { $$ = newprint($3); }
-  ;
-
-list: { $$ = NULL; }
-  | exp ';' list { $$ = newast('L', $1, $3); }
-  | RETURN exp ';' list { $$ = $2; }
-  ;
 
 explist: exp
   | exp ',' explist { $$ = newast('L', $1, $3); }
