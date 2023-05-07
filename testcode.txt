@@ -3,6 +3,6 @@ procedure square(x) {
     return x * x;
 };.
 while (i < 10) {
-    square(i);
+    print(square(i));
     var i = i + 1;
 };.
