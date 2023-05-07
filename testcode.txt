@@ -1,7 +1,7 @@
 var i = 0;.
 procedure square(x) {
     return x * x;
-};.
+};
 while (i < 10) {
     print(square(i));
     var i = i + 1;
