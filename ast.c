@@ -1,7 +1,7 @@
 #include "ast.h"
+#include "Loops.h"
 #include "function.h"
 #include "symbol_table.h"
-#include "Loops.h"
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -96,10 +96,13 @@ void treefree(struct ast *a) {
   case '=':
     free(((struct symasgn *)a)->v);
     break;
-  case 'I': case 'W':
-    free( ((struct flow *)a)->cond);
-    if( ((struct flow *)a)->tl) treefree( ((struct flow *)a)->tl);
-    if( ((struct flow *)a)->el) treefree( ((struct flow *)a)->el);
+  case 'I':
+  case 'W':
+    free(((struct flow *)a)->cond);
+    if (((struct flow *)a)->tl)
+      treefree(((struct flow *)a)->tl);
+    if (((struct flow *)a)->el)
+      treefree(((struct flow *)a)->el);
     break;
 
   default:
@@ -157,45 +160,45 @@ double eval(struct ast *a) {
   case 'P':
     printf("%4.4g\n", eval(((struct printref *)a)->v));
     break;
-  case '1': 
-    v = (eval(a->l) > eval(a->r))? 1 : 0; 
+  case '1':
+    v = (eval(a->l) > eval(a->r)) ? 1 : 0;
     break;
-  case '2': 
-    v = (eval(a->l) < eval(a->r))? 1 : 0; 
+  case '2':
+    v = (eval(a->l) < eval(a->r)) ? 1 : 0;
     break;
-  case '3': 
-    v = (eval(a->l) != eval(a->r))? 1 : 0; 
+  case '3':
+    v = (eval(a->l) != eval(a->r)) ? 1 : 0;
     break;
-  case '4': 
-    v = (eval(a->l) == eval(a->r))? 1 : 0; 
+  case '4':
+    v = (eval(a->l) == eval(a->r)) ? 1 : 0;
     break;
-  case '5': 
-    v = (eval(a->l) >= eval(a->r))? 1 : 0; 
+  case '5':
+    v = (eval(a->l) >= eval(a->r)) ? 1 : 0;
     break;
-  case '6': 
-    v = (eval(a->l) <= eval(a->r))? 1 : 0; 
+  case '6':
+    v = (eval(a->l) <= eval(a->r)) ? 1 : 0;
     break;
 
   case 'I':
-    if( eval( ((struct flow *)a)->cond) != 0) { 
-      if( ((struct flow *)a)->tl) { 
-        v = eval( ((struct flow *)a)->tl);
+    if (eval(((struct flow *)a)->cond) != 0) {
+      if (((struct flow *)a)->tl) {
+        v = eval(((struct flow *)a)->tl);
       } else
         v = 0.0; /* a default value */
-      } else {
-        if( ((struct flow *)a)->el) { 
-          v = eval(((struct flow *)a)->el);
-        } else
-          v = 0.0; /* a default value */
+    } else {
+      if (((struct flow *)a)->el) {
+        v = eval(((struct flow *)a)->el);
+      } else
+        v = 0.0; /* a default value */
     }
     break;
   case 'W':
     v = 0.0; /* a default value */
-    if( ((struct flow *)a)->tl) {
-      while( eval(((struct flow *)a)->cond) != 0)
+    if (((struct flow *)a)->tl) {
+      while (eval(((struct flow *)a)->cond) != 0)
         v = eval(((struct flow *)a)->tl);
     }
-    break; 
+    break;
   case 'A':
     v = (eval(a->l) == 1 && eval(a->r) == 1) ? 1 : 0;
     break;
@@ -215,7 +218,7 @@ void yyerror(char *s, ...) {
   va_list ap;
   va_start(ap, s);
 
-  fprintf(stderr, "%d: error: "); //, yylineno);
+  fprintf(stderr, "%d: error: ", yylineno);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
 }

@@ -15,7 +15,6 @@ symbol_name {alpha}({alpha}|{digit})*
 
 %%
 "+" |
-"." |
 "-" |
 "*" |
 "/" |
@@ -28,6 +27,7 @@ symbol_name {alpha}({alpha}|{digit})*
 "{" |
 "[" |
 "]" |
+"." |
 ";"                                { return yytext[0]; }
 ">" { yylval.fn = 1; return CMP; }
 "<" { yylval.fn = 2; return CMP; }
