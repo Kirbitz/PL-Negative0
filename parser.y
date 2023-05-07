@@ -24,7 +24,7 @@ int yylex(void);
 %token PRINT RETURN
 %token '(' ')' '{' '}' '[' ']'
 %token ';' ','
-%right '=' '>=' '<=' '<' '>' '!=' '==' AND OR NOT
+%right CMP
 %left '+' '-'
 %left '*' '/'
 %nonassoc '|' UMINUS
@@ -86,7 +86,7 @@ if_statement: IF '(' exp ')' THEN '{' statement_list '}' { $$ = newflow('I', $3,
   | IF '(' exp ')' THEN '{' statement_list '}' ELSE '{' statement_list '}' { $$ = newflow('I', $3, $7, $11); }
   ;
 
-while_statement: WHILE '(' exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }
+while_statement: WHILE '(' comp_exp ')' DO '{' statement_list '}' { $$ = newflow('W', $3, $7, NULL); }
 
 exp:  exp '+' exp { $$ = newast('+', $1,$3); }
   | exp '-' exp { $$ = newast('-', $1,$3);}
@@ -100,6 +100,8 @@ exp:  exp '+' exp { $$ = newast('+', $1,$3); }
   | NAME '(' explist ')' { $$ = newuserfunction($1, $3); }
   ;
 
+comp_exp: exp CMP exp { $$ = newcmp($2, $1, $3); }
+        ;
 
 
 

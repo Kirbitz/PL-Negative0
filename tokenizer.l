@@ -28,6 +28,12 @@ symbol_name {alpha}({alpha}|{digit})*
 "[" |
 "]" |
 ";"                                { return yytext[0]; }
+">" { yylval.fn = 1; return CMP; }
+"<" { yylval.fn = 2; return CMP; }
+"!=" { yylval.fn = 3; return CMP; }
+"==" { yylval.fn = 4; return CMP; }
+">=" { yylval.fn = 5; return CMP; }
+"<=" { yylval.fn = 6; return CMP; }
 ("print"|"PRINT")                  { return PRINT; }
 ("VAR"|"var")                      { return VAR; }
 ("PROCEDURE"|"procedure")          { return PROCEDURE; }
