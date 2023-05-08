@@ -1,8 +1,31 @@
 var i = 0;.
 procedure square(x) {
-    return x * x;
+  return x * x;
 };
 while (i < 10) {
-    print(square(i));
-    var i = i + 1;
+  print(square(i));
+  var i = i + 1;
+};.
+if (i > 7) {
+  print(i); 
+};.
+if (i < 2) {
+  print(i); 
+} else {
+  print(20);
+};.
+if (i != 10) {
+  print(30); 
+};.
+if (i == 10) {
+  print(40); 
+};.
+if (i == 10 and i > 7) {
+  print(50); 
+};.
+if (i != 10 or i > 7) {
+  print(60); 
+};.
+if (not i != 10) {
+  print(70); 
 };.
