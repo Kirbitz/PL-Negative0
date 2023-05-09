@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "Loops.h"
 #include "function.h"
 #include "symbol_table.h"
 #include <math.h>
@@ -68,12 +69,21 @@ void treefree(struct ast *a) {
   case '-':
   case '*':
   case '/':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case 'A':
+  case 'O':
   case 'L':
     treefree(a->r);
   /* one subtree */
   case '|':
   case 'M':
   case 'C':
+  case '!':
   case 'F':
     if (a->l) {
       treefree(a->l);
@@ -86,6 +96,15 @@ void treefree(struct ast *a) {
   case '=':
     free(((struct symasgn *)a)->v);
     break;
+  case 'I':
+  case 'W':
+    free(((struct flow *)a)->cond);
+    if (((struct flow *)a)->tl)
+      treefree(((struct flow *)a)->tl);
+    if (((struct flow *)a)->el)
+      treefree(((struct flow *)a)->el);
+    break;
+
   default:
     printf("internal error: free bad node %c\n", a->nodetype);
   }
@@ -141,6 +160,54 @@ double eval(struct ast *a) {
   case 'P':
     printf("%4.4g\n", eval(((struct printref *)a)->v));
     break;
+  case '1':
+    v = (eval(a->l) > eval(a->r)) ? 1 : 0;
+    break;
+  case '2':
+    v = (eval(a->l) < eval(a->r)) ? 1 : 0;
+    break;
+  case '3':
+    v = (eval(a->l) != eval(a->r)) ? 1 : 0;
+    break;
+  case '4':
+    v = (eval(a->l) == eval(a->r)) ? 1 : 0;
+    break;
+  case '5':
+    v = (eval(a->l) >= eval(a->r)) ? 1 : 0;
+    break;
+  case '6':
+    v = (eval(a->l) <= eval(a->r)) ? 1 : 0;
+    break;
+
+  case 'I':
+    if (eval(((struct flow *)a)->cond) != 0) {
+      if (((struct flow *)a)->tl) {
+        v = eval(((struct flow *)a)->tl);
+      } else
+        v = 0.0; /* a default value */
+    } else {
+      if (((struct flow *)a)->el) {
+        v = eval(((struct flow *)a)->el);
+      } else
+        v = 0.0; /* a default value */
+    }
+    break;
+  case 'W':
+    v = 0.0; /* a default value */
+    if (((struct flow *)a)->tl) {
+      while (eval(((struct flow *)a)->cond) != 0)
+        v = eval(((struct flow *)a)->tl);
+    }
+    break;
+  case 'A':
+    v = (eval(a->l) == 1 && eval(a->r) == 1) ? 1 : 0;
+    break;
+  case 'O':
+    v = (eval(a->l) == 1 || eval(a->r) == 1) ? 1 : 0;
+    break;
+  case '!':
+    v = (eval(a->l) == 1) ? 0 : 1;
+    break;
   default:
     printf("internal error: bad node %c\n", a->nodetype);
   }
@@ -151,7 +218,7 @@ void yyerror(char *s, ...) {
   va_list ap;
   va_start(ap, s);
 
-  fprintf(stderr, "%d: error: ", yylineno);
+  fprintf(stderr, "%d: error: "); // , yylineno);
   vfprintf(stderr, s, ap);
   fprintf(stderr, "\n");
 }
